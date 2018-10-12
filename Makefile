@@ -1,30 +1,14 @@
 HERE = $(shell pwd)
-VENV = .
-VIRTUALENV = virtualenv
+VENV = ~/.local/pyvenv-ase
 BIN = $(VENV)/bin
 PYTHON = $(BIN)/python
 
-INSTALL = $(BIN)/pip install --no-deps
+.PHONY: all run test
 
-.PHONY: all test docs build_extras
-
-all: build
-
-$(PYTHON):
-	$(VIRTUALENV) $(VTENV_OPTS) $(VENV)
-
-build: $(PYTHON)
-	$(PYTHON) setup.py develop
-
-clean:
-	rm -rf $(VENV)
-
-test_dependencies:
-	$(BIN)/pip install flake8 tox
-
-test: build test_dependencies
-	$(BIN)/flake8 myservice
-	$(BIN)/tox
+all: run
 
 run:
-	FLASK_APP=myservice bin/flask run
+	FLASK_APP=myservice $(BIN)/flask run
+
+test:
+	$(BIN)/pytest ${HERE}
