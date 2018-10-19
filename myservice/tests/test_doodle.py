@@ -364,5 +364,63 @@ class TestApp(unittest.TestCase):
                                 "message": "410 Gone: The requested URL is no longer available on this server and there is no forwarding address. If you followed a link from a foreign page, please contact the author of this page."
                             })
 
+    def test4(self): #
+        app = tested_app.test_client()
+
+        reply =app.post('/doodles', 
+                        data=json.dumps({"title" : "pooltest", 
+                                        "options" : ["1", "2", "3"]
+                                        }), 
+                        content_type='application/json')
+
+        body = json.loads(str(reply.data, 'utf8'))
+
+        firstPOLLNUMBER = body['pollnumber']
+
+        reply = app.post('/doodles', 
+                        data=json.dumps({"title" : "pooltest2", 
+                                        "options" : ["1", "2", "3"]
+                                        }), 
+                        content_type='application/json')
+
+        body = json.loads(str(reply.data, 'utf8'))
+
+        secondPOLLNUMBER = body['pollnumber']
+
+        self.assertGreater( secondPOLLNUMBER,firstPOLLNUMBER)
+
+        reply = app.delete('/doodles/'+str(firstPOLLNUMBER))
+
+        reply = app.post('/doodles', 
+                        data=json.dumps({"title" : "pooltest3", 
+                                        "options" : ["1", "2", "3"]
+                                        }), 
+                        content_type='application/json')
+
+        body = json.loads(str(reply.data, 'utf8'))
+
+        thirdPOLLNUMBER = body['pollnumber']
+
+        self.assertGreater(thirdPOLLNUMBER, secondPOLLNUMBER)
+        self.assertGreater(thirdPOLLNUMBER, firstPOLLNUMBER)
+
+        reply = app.delete('/doodles/'+str(secondPOLLNUMBER))
+
+        reply = app.post('/doodles', 
+                        data=json.dumps({"title" : "pooltest4", 
+                                        "options" : ["1", "2", "3"]
+                                        }), 
+                        content_type='application/json')
+
+        body = json.loads(str(reply.data, 'utf8'))
+
+        fouthPOLLNUMBER = body['pollnumber']
+
+        self.assertGreater(fouthPOLLNUMBER, firstPOLLNUMBER)
+        self.assertGreater(fouthPOLLNUMBER, secondPOLLNUMBER)
+        self.assertGreater(fouthPOLLNUMBER, thirdPOLLNUMBER)
         
+
+
+
 
